@@ -46,7 +46,7 @@ async def get_all_photos():
         return formatted_photos
 
 @app.post("photos", status_code=201)
-async def add_photo(file: UploadFile)
+async def add_photo(file: UploadFile):
         print("Create endpoint hit!!")
         print(file.filename)
         print(file.content_type)
@@ -56,7 +56,19 @@ async def add_photo(file: UploadFile)
         bucket = s3.Bucket(S3_BUCKET_NAME)
         bucket.upload_fileobj(file.file, file.filename, ExtraArgs={"ACL": "public-read"})
 
-uploaded_file_url = f"https://{S3_BUCKET_NAME}.s3.amazonaws.com/{file.filename}"
+        uploaded_file_url = f"https://{S3_BUCKET_NAME}.s3.amazonaws.com/{file.filename}"
+
+        #store photo url in database
+        conn = psycopg2.connect(
+                database="exampledb", user="docker", password="docker", host="0.0.0.0"
+        )
+        cur = conn.cursor()
+        cur.execute(f"insert into photo (photo_name, photo_url) values ('{file.filename}', '{uploaded_file_url}')"
+        )
+        conn.commit()
+        cur.close()
+        conn.close()
+
 
 
 
