@@ -7,15 +7,16 @@ services:
     environment:
       POSTGRES_USER: docker
       POSTGRES_PASSWORD: docker
-      POSTGRES_DB: exampldb
+      POSTGRES_DB: exampledb
     volumes:
       - db-photo-upload-service:/var/lib/postgresql/data
-adminer:
-  image: adminer
-  restart: always
-  depends_on:
-    - database
-  ports:
-    - 8080:8080
+  adminer:
+    image: adminer
+    restart: always
+    depends_on:
+      - database
+    ports:
+      - 8080:8080
+
 volumes:
-  db-photo-upload-service
+  db-photo-upload-service:
