@@ -7,6 +7,8 @@ from pydantic import BaseModel
 import uvicorn
 from fastapi import FastAPI, UploadFile
 
+S3_BUCKET_NAME = "test-photos-123"
+
 class PhotoModel(BaseModel):
         id: int
         photo_name: str
@@ -42,6 +44,20 @@ async def get_all_photos():
         cur.close()
         conn.close()
         return formatted_photos
+
+@app.post("photos", status_code=201)
+async def add_photo(file: UploadFile)
+        print("Create endpoint hit!!")
+        print(file.filename)
+        print(file.content_type)
+
+        #upload file to aws S3
+        s3 = boto3.resource("s3")
+        bucket = s3.Bucket(S3_BUCKET_NAME)
+        bucket.upload_fileobj(file.file, file.filename, ExtraArgs={"ACL": "public-read"})
+
+uploaded_file_url = f"https://{S3_BUCKET_NAME}.s3.amazonaws.com/{file.filename}"
+
 
 
 if __name__ == "__main__":
